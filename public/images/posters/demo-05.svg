@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850">
+  <defs><linearGradient id="g" x2="1" y2=".7"><stop stop-color="#bd9d70"/><stop offset="1" stop-color="#423b30"/></linearGradient><radialGradient id="r"><stop stop-color="#f8e3be" stop-opacity=".8"/><stop offset="1" stop-color="#f8e3be" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="850" fill="url(#g)"/><circle cx="820" cy="350" r="350" fill="url(#r)"/><path d="M0 680Q400 490 760 690t440-10v170H0" fill="#1d1d19" opacity=".68"/>
+  <text x="78" y="92" fill="#fff" font-family="Arial,sans-serif" font-size="22" letter-spacing="6">A FICTIONAL DEMO PROJECT</text><text x="78" y="590" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="92">MADE OF MORE</text><text x="82" y="650" fill="#fff" font-family="Arial,sans-serif" font-size="28">DEMO BRAND 05 · TESTIMONIAL FILM</text>
+</svg>

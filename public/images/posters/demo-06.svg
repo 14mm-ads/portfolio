@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850">
+  <defs><linearGradient id="g" x2=".7" y2="1"><stop stop-color="#678b79"/><stop offset="1" stop-color="#203c3b"/></linearGradient><radialGradient id="r"><stop stop-color="#c4dbc3" stop-opacity=".78"/><stop offset="1" stop-color="#c4dbc3" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="850" fill="url(#g)"/><circle cx="845" cy="340" r="390" fill="url(#r)"/><path d="M0 630 290 360 485 550 800 275 1200 635v215H0" fill="#12201c" opacity=".55"/>
+  <text x="78" y="92" fill="#fff" font-family="Arial,sans-serif" font-size="22" letter-spacing="6">A FICTIONAL DEMO PROJECT</text><text x="78" y="590" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="92">THE LONG WEEKEND</text><text x="82" y="650" fill="#fff" font-family="Arial,sans-serif" font-size="28">DEMO BRAND 06 · DIGITAL FILM</text>
+</svg>

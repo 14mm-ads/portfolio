@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850">
+  <defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#60808b"/><stop offset="1" stop-color="#1d303a"/></linearGradient><radialGradient id="r"><stop stop-color="#d9e6df" stop-opacity=".82"/><stop offset="1" stop-color="#d9e6df" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="850" fill="url(#g)"/><circle cx="850" cy="340" r="370" fill="url(#r)"/><path d="M0 675Q390 480 700 660t500-2v192H0" fill="#172027" opacity=".65"/>
+  <text x="78" y="92" fill="#fff" font-family="Arial,sans-serif" font-size="22" letter-spacing="6">A FICTIONAL DEMO PROJECT</text><text x="78" y="590" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="92">IN GOOD COMPANY</text><text x="82" y="650" fill="#fff" font-family="Arial,sans-serif" font-size="28">DEMO BRAND 08 · THEATRE COMMERCIAL</text>
+</svg>

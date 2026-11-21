@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 1200">
+  <defs><linearGradient id="g" x2=".9" y2="1"><stop stop-color="#b77b7c"/><stop offset="1" stop-color="#4a2c3b"/></linearGradient><radialGradient id="r"><stop stop-color="#f2c4bc" stop-opacity=".8"/><stop offset="1" stop-color="#f2c4bc" stop-opacity="0"/></radialGradient></defs>
+  <rect width="850" height="1200" fill="url(#g)"/><circle cx="480" cy="430" r="410" fill="url(#r)"/><path d="m0 830 210-170 170 130 190-250 280 240v420H0" fill="#261b28" opacity=".56"/>
+  <text x="58" y="95" fill="#fff" font-family="Arial,sans-serif" font-size="19" letter-spacing="4">FICTIONAL DEMO</text><text x="58" y="840" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="70">MOVE WITH</text><text x="58" y="925" fill="#fff" font-family="Georgia,serif" font-style="italic" font-size="84">the moment.</text><text x="60" y="985" fill="#fff" font-family="Arial,sans-serif" font-size="20">DEMO BRAND 09 · CREATOR FILM</text>
+</svg>

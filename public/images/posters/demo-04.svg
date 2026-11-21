@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 1200">
+  <defs><linearGradient id="g" x2=".8" y2="1"><stop stop-color="#9575bd"/><stop offset="1" stop-color="#261e3b"/></linearGradient><radialGradient id="r"><stop stop-color="#ebd4ff" stop-opacity=".86"/><stop offset="1" stop-color="#ebd4ff" stop-opacity="0"/></radialGradient></defs>
+  <rect width="850" height="1200" fill="url(#g)"/><circle cx="510" cy="430" r="400" fill="url(#r)"/><circle cx="425" cy="545" r="200" fill="none" stroke="#fff" stroke-opacity=".24" stroke-width="3"/>
+  <text x="58" y="95" fill="#fff" font-family="Arial,sans-serif" font-size="19" letter-spacing="4">FICTIONAL DEMO</text><text x="58" y="825" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="66">A GOOD KIND</text><text x="58" y="902" fill="#fff" font-family="Georgia,serif" font-style="italic" font-size="82">of loud.</text><text x="60" y="962" fill="#fff" font-family="Arial,sans-serif" font-size="20">DEMO BRAND 04 · VERTICAL</text>
+</svg>

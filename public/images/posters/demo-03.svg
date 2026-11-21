@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850">
+  <defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#739d9b"/><stop offset="1" stop-color="#132b31"/></linearGradient><radialGradient id="r"><stop stop-color="#d5eee0" stop-opacity=".8"/><stop offset="1" stop-color="#d5eee0" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="850" fill="url(#g)"/><circle cx="850" cy="330" r="340" fill="url(#r)"/><path d="M0 640 310 360 480 560 750 280 1200 620v230H0" fill="#101c20" opacity=".65"/>
+  <text x="78" y="92" fill="#fff" font-family="Arial,sans-serif" font-size="22" letter-spacing="6">A FICTIONAL DEMO PROJECT</text><text x="78" y="590" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="90">THE EXTRA MILE</text><text x="82" y="650" fill="#fff" font-family="Arial,sans-serif" font-size="28">DEMO BRAND 03 · PRODUCT FILM</text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0b1110"/>
+  <circle cx="875" cy="250" r="340" fill="#034553"/>
+  <circle cx="875" cy="250" r="220" fill="#739d9b" opacity=".42"/>
+  <text x="90" y="110" fill="#a5c0bb" font-family="Arial,sans-serif" font-size="22" letter-spacing="7">14MM ADVERTISING · CAMPAIGN ARCHIVE</text>
+  <text x="84" y="390" fill="#f3f4ee" font-family="Arial,sans-serif" font-size="146" font-weight="700" letter-spacing="-10">Made to</text>
+  <text x="88" y="520" fill="#a5c0bb" font-family="Georgia,serif" font-size="134" font-style="italic">move.</text>
+</svg>

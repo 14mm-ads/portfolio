@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 1200">
+  <defs><linearGradient id="g" x2=".8" y2="1"><stop stop-color="#b87455"/><stop offset="1" stop-color="#452c2c"/></linearGradient><radialGradient id="r"><stop stop-color="#ffd6a4" stop-opacity=".8"/><stop offset="1" stop-color="#ffd6a4" stop-opacity="0"/></radialGradient></defs>
+  <rect width="850" height="1200" fill="url(#g)"/><circle cx="540" cy="430" r="430" fill="url(#r)"/><path d="M0 850Q230 680 450 845t400-18v373H0" fill="#1b1716" opacity=".7"/>
+  <text x="58" y="100" fill="#fff" font-family="Arial,sans-serif" font-size="19" letter-spacing="4">FICTIONAL DEMO</text><text x="58" y="835" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="66">SMALL THINGS,</text><text x="58" y="920" fill="#fff" font-family="Georgia,serif" font-style="italic" font-size="85">big days.</text><text x="60" y="982" fill="#fff" font-family="Arial,sans-serif" font-size="20">DEMO BRAND 02 · SOCIAL FILM</text>
+</svg>
