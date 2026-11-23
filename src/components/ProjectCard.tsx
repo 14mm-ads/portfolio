@@ -25,7 +25,9 @@ export default function ProjectCard({ project, index, onBrandClick }: Props) {
     >
       <Link className="project-image-link" to={`/work/${project.slug}`} aria-label={`Open ${isDemo ? 'demo ' : ''}project ${project.title} by ${project.brand}`}>
         <div className="project-image" style={{ '--project-accent': project.accentColor } as React.CSSProperties}>
-          <img src={assetUrl(project.posterSrc)} alt={`${project.brand}, ${isDemo ? 'demo ' : ''}campaign poster: ${project.title}`} loading="lazy" />
+          {project.posterSrc
+            ? <img src={assetUrl(project.posterSrc)} alt={`${project.brand}, ${isDemo ? 'demo ' : ''}campaign poster: ${project.title}`} loading="lazy" />
+            : project.videoSrc && <video src={assetUrl(project.videoSrc)} muted playsInline preload="metadata" aria-hidden="true" />}
           {isDemo && <span className="demo-label">DEMO PROJECT</span>}
           <span className="image-index">{String(index + 1).padStart(2, '0')}</span>
           <span className="image-play" aria-hidden="true"><Play size={15} fill="currentColor" /></span>
