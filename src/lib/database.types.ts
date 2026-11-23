@@ -52,6 +52,52 @@ export type Database = {
         { id: string; slug: string; data: Json; created_at?: string; updated_at?: string },
         { id?: string; slug?: string; data?: Json; created_at?: string; updated_at?: string }
       >
+      portfolio_options: Table<
+        { id: string; field: string; value: string; created_at: string },
+        { id?: string; field: string; value: string; created_at?: string },
+        { id?: string; field?: string; value?: string; created_at?: string }
+      >
+      change_log: Table<
+        {
+          id: number
+          created_at: string
+          actor_user_id: string | null
+          actor_name: string | null
+          actor_email: string | null
+          entity_type: string
+          entity_key: string
+          entity_label: string
+          action: string
+          before_record: Json | null
+          after_record: Json | null
+        },
+        {
+          id?: number
+          created_at?: string
+          actor_user_id?: string | null
+          actor_name?: string | null
+          actor_email?: string | null
+          entity_type: string
+          entity_key: string
+          entity_label: string
+          action: string
+          before_record?: Json | null
+          after_record?: Json | null
+        },
+        {
+          id?: number
+          created_at?: string
+          actor_user_id?: string | null
+          actor_name?: string | null
+          actor_email?: string | null
+          entity_type?: string
+          entity_key?: string
+          entity_label?: string
+          action?: string
+          before_record?: Json | null
+          after_record?: Json | null
+        }
+      >
     }
     Views: Record<string, never>
     Functions: {
