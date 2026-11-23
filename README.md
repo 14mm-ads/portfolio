@@ -131,7 +131,7 @@ No video binaries are included: a sample with a verified creator, source page, a
 5. Add the matching poster, update `posterSrc`, and add a WebVTT caption track via `captionSrc` when available.
 6. Record creator, source/download page, license, and download date in `public/videos/README.md`.
 
-All 30 demo records have an editable local video path; the MP4 files themselves are intentionally not included, so each project shows its local demo poster and a missing-file message until media is added. The `showreel` action expects `/videos/showreel.mp4`. Add that file when an approved showreel is ready. Videos are not autoplayed in the archive, and project playback starts muted after an explicit play action. Browser-native controls provide pause, progress, volume/unmute, and fullscreen. Off-screen players are paused.
+All 30 demo records have an editable local video path; the MP4 files themselves are intentionally not included, so each project shows its local demo poster and a missing-file message until media is added. The `showreel` action expects `/videos/showreel.mp4`. Add that file when an approved showreel is ready. Videos are not autoplayed in the archive, and project playback starts with sound after an explicit play action. Browser-native controls provide pause, progress, volume, captions, and fullscreen. Off-screen players are paused.
 
 ### Recommended delivery
 
