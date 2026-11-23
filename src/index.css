@@ -385,7 +385,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .admin-field { min-width: 0; display: grid; align-content: start; gap: 8px; color: #c2ccc4; font-size: 11px; }
 .admin-field > input, .admin-field > select, .admin-field > textarea { width: 100%; min-height: 43px; border: 1px solid rgba(238,243,236,.16); border-radius: 0; padding: 10px 11px; background: #101917; color: white; font: inherit; font-size: 12px; }
 .admin-field > textarea { resize: vertical; line-height: 1.6; }
-.admin-field > select[multiple] { min-height: 126px; }
+.admin-multi-select { position: relative; min-width: 0; color: white; font-size: 12px; }
+.admin-multi-select > summary { min-height: 43px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid rgba(238,243,236,.16); padding: 10px 11px; background: #101917; cursor: pointer; list-style: none; }
+.admin-multi-select > summary::-webkit-details-marker { display: none; }
+.admin-multi-select > summary::after { width: 7px; height: 7px; flex: 0 0 auto; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; content: ""; transform: rotate(45deg) translateY(-2px); }
+.admin-multi-select[open] > summary { border-color: var(--sage); }
+.admin-multi-select[open] > summary::after { transform: rotate(225deg) translate(-2px, -1px); }
+.admin-multi-select-menu { position: absolute; z-index: 5; top: calc(100% + 3px); right: 0; left: 0; max-height: 220px; overflow-y: auto; border: 1px solid rgba(238,243,236,.2); background: #101917; box-shadow: 0 12px 28px rgba(0,0,0,.4); }
+.admin-multi-select-option { display: flex; align-items: center; gap: 9px; min-height: 37px; padding: 7px 10px; color: #e4e9e3; cursor: pointer; }
+.admin-multi-select-option:hover { background: rgba(115,157,155,.12); }
+.admin-multi-select-option input { width: 15px; height: 15px; margin: 0; accent-color: var(--sage); }
+.admin-field > small { color: var(--muted); font-size: 10px; }
 .admin-field > input[type="color"] { width: 70px; min-height: 42px; padding: 3px; }
 .field-wide { grid-column: 1 / -1; }
 .admin-upload-control { position: relative; min-height: 44px; display: flex; align-items: center; overflow: hidden; border: 1px dashed rgba(238,243,236,.22); padding: 0 11px; color: #bdc9c1; }
