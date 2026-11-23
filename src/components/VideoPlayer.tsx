@@ -27,7 +27,7 @@ export default function VideoPlayer({ project }: Props) {
   if (!project.videoSrc) {
     return (
       <div className={`film-stage film-stage-${project.orientation.toLowerCase()}`}>
-        <img className="film-poster" src={assetUrl(project.posterSrc)} alt={`${project.title} ${isDemo ? 'demo ' : ''}poster`} />
+        {project.posterSrc && <img className="film-poster" src={assetUrl(project.posterSrc)} alt={`${project.title} ${isDemo ? 'demo ' : ''}poster`} />}
         <div className="film-poster-overlay" />
         <div className="film-unavailable">
           <span><Clapperboard size={16} /> {isDemo ? 'DEMO FILM FILE NOT ADDED' : 'PROJECT VIDEO NOT ADDED'}</span>
@@ -42,16 +42,15 @@ export default function VideoPlayer({ project }: Props) {
 
   return (
     <div className={`film-stage film-stage-${project.orientation.toLowerCase()}`}>
-      <img className="film-poster" src={assetUrl(project.posterSrc)} alt="" />
+      {project.posterSrc && <img className="film-poster" src={assetUrl(project.posterSrc)} alt="" />}
       <video
         ref={videoRef}
         className={`film-player${status === 'ready' ? ' video-ready' : ''}`}
         src={assetUrl(project.videoSrc)}
-        poster={assetUrl(project.posterSrc)}
+        poster={project.posterSrc ? assetUrl(project.posterSrc) : undefined}
         controls
         playsInline
         preload="metadata"
-        muted
         onLoadStart={() => setStatus('loading')}
         onCanPlay={() => setStatus('ready')}
         onError={() => setStatus('error')}
@@ -60,7 +59,7 @@ export default function VideoPlayer({ project }: Props) {
             if (video !== videoRef.current) video.pause()
           })
         }}
-        aria-label={`${project.title} ${isDemo ? 'demo ' : ''}video. Starts muted; use the player controls to unmute.`}
+        aria-label={`${project.title} ${isDemo ? 'demo ' : ''}video.`}
       >
         {project.captionSrc && <track kind="captions" src={assetUrl(project.captionSrc)} srcLang={project.language.toLowerCase().slice(0, 2)} label={project.language} default />}
         Your browser does not support the video element.
@@ -69,7 +68,7 @@ export default function VideoPlayer({ project }: Props) {
         <button className="video-cover" type="button" onClick={() => {
           setStatus('loading')
           void videoRef.current?.play().catch(() => setStatus('error'))
-        }} aria-label={`Play ${project.title} ${isDemo ? 'demo ' : ''}video, muted`}>
+        }} aria-label={`Play ${project.title} ${isDemo ? 'demo ' : ''}video`}>
           <span><Play size={18} fill="currentColor" /> Play video</span>
         </button>
       )}
