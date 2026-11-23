@@ -46,12 +46,12 @@ The production site is generated in `dist/`. Build output is static and can be d
 
 ## Admin portal and Supabase setup
 
-The admin portal at `/admin` lets allowlisted staff add, edit, and remove projects, upload MP4/WebM videos and poster images, edit brand profiles/logos, and update the public archive. With no Supabase configuration, the portfolio continues to use its local demo data and the portal displays setup instructions.
+The admin portal at `/portfolio/admin` lets allowlisted staff add, edit, and remove projects, brands, and shared dropdown options. It also records project, brand, and option changes for the last 30 days. Project and brand data is public to read; all database and media writes are restricted by Supabase row-level security to explicitly allowlisted administrators. With no Supabase configuration, the portfolio continues to use its local demo data and the portal displays setup instructions.
 
 1. Create a Supabase project. In **Project Settings → API**, copy the project URL and publishable/anon key.
-2. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. These are public browser credentials; never put a Supabase service-role key in a `VITE_` variable or commit it.
-3. In the Supabase SQL Editor, run `supabase/migrations/20261024000000_portfolio_admin.sql`.
-4. Create each administrator in **Authentication → Users**. Keep public sign-ups disabled. Copy the new user’s UUID, then explicitly allowlist that account in SQL:
+2. For local testing, copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+3. In the Supabase SQL Editor, run `supabase/migrations/20261024000000_portfolio_admin.sql`, then run `supabase/migrations/20261123000000_admin_options_and_change_log.sql`.
+4. In Supabase **Authentication → Providers → Email**, keep public sign-ups disabled. Create each administrator under **Authentication → Users**. Copy the new user’s UUID, then explicitly allowlist that account in SQL:
 
    ```sql
    insert into public.admin_users (user_id)
@@ -59,10 +59,13 @@ The admin portal at `/admin` lets allowlisted staff add, edit, and remove projec
    ```
 
    Remove access by deleting that user’s row from `public.admin_users`. The website checks the allowlist after sign-in, and row-level security enforces it for database and storage writes.
-5. Restart the Vite development server after changing `.env.local`, then visit `/admin` and sign in. For a new/empty project, choose **Import demo archive** to seed the fictional projects and brands; otherwise add your own.
-6. For deployment, set the same two `VITE_` variables in the host’s build environment and rebuild. Add the deployed site URL to Supabase **Authentication → URL Configuration**. The project URL and anon key are intended to be public; database RLS policies protect writes. Never expose the service-role key.
+5. In GitHub, open the `14mm-ads/portfolio` repository and go to **Settings → Secrets and variables → Actions**. Add repository secrets named `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`, using the Supabase project URL and publishable/anon key. The Pages workflow injects these only during the build. They are browser-visible credentials; never use or expose a service-role/secret key in a `VITE_` variable.
+6. In Supabase **Authentication → URL Configuration**, set the site URL to `https://14mm-ads.github.io/portfolio/` and add it as an allowed redirect URL.
+7. Push a commit or run **Deploy to GitHub Pages** from the repository’s Actions tab to rebuild the deployed site with Supabase enabled. Visit `https://14mm-ads.github.io/portfolio/admin` and sign in with the allowlisted account. For an empty project, choose **Import demo archive** to seed the fictional projects and brands; otherwise add your own.
 
-Media is stored in the public `campaign-media` bucket so project pages can stream it without visitor sign-in. Only allowlisted administrators can upload, update, or delete objects. Uploads use resumable 6 MB chunks with retry and progress reporting. The migration caps individual files at 500 MB and allows MP4/WebM video, JPEG/PNG/WebP images, and WebVTT captions. Respect your Supabase storage/bandwidth plan and use compressed web delivery encodes. Media replacements remove the previous managed object after saving.
+Media is stored in the public `campaign-media` bucket so project pages can stream it without visitor sign-in. Only allowlisted administrators can upload, update, or delete objects. Uploads use resumable 6 MB chunks with retry and progress reporting. Uploading a video without an existing poster creates and saves a JPEG poster from its first frame; posters can also be supplied manually. The migration caps individual files at 500 MB and allows MP4/WebM video, JPEG/PNG/WebP images, and WebVTT captions. Respect your Supabase storage/bandwidth plan and use compressed web delivery encodes. Media replacements remove the previous managed object after saving.
+
+The **Options** tab manages shared sector, category, campaign, format, language, platform, orientation, and tag choices. Brand sector uses the shared sector list; brand tagline, description, and other descriptive fields remain free text. Credits and project summary remain free text. The **Change log** tab shows the editor identity, timestamp, entity, action, and changed values for projects, brands, and dropdown options over the previous 30 days. Audit entries are written by database triggers and are visible only to allowlisted administrators.
 
 Project and brand edits are written to Supabase and loaded by the public archive. The demo data remains in `src/data/projects.ts` as the local fallback and as the content imported by the first-run seed button. The schema is described by the SQL migration; no server/service key is needed in the browser.
 
