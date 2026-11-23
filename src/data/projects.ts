@@ -1,4 +1,4 @@
-export type Orientation = 'Landscape' | 'Vertical'
+export type Orientation = string
 
 export type DemoProject = {
   id: string
