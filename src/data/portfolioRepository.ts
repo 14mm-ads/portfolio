@@ -14,9 +14,135 @@ export type BrandDetails = {
   accent_color: string
 }
 
+export const PORTFOLIO_OPTION_FIELDS = {
+  sector: 'Sector',
+  businessCategory: 'Business category',
+  campaignType: 'Campaign type',
+  adFormat: 'Ad format',
+  language: 'Language',
+  platform: 'Platform',
+  orientation: 'Orientation',
+  tags: 'Tags',
+} as const
+
+export type PortfolioOptionField = keyof typeof PORTFOLIO_OPTION_FIELDS
+export type PortfolioOption = {
+  id: string
+  field: PortfolioOptionField
+  value: string
+  created_at: string
+}
+export type ChangeLogEntry = {
+  id: number
+  created_at: string
+  actor_user_id: string | null
+  actor_name: string | null
+  actor_email: string | null
+  entity_type: string
+  entity_key: string
+  entity_label: string
+  action: string
+  before_record: Json | null
+  after_record: Json | null
+}
+
 function requireSupabase() {
   if (!supabase) throw new Error('Supabase is not configured. Add the required VITE_SUPABASE values and restart the site.')
   return supabase
+}
+
+export async function fetchPortfolioOptions() {
+  const { data, error } = await requireSupabase()
+    .from('portfolio_options')
+    .select('*')
+    .order('field')
+    .order('value')
+  if (error) throw error
+  return data as PortfolioOption[]
+}
+
+export async function addPortfolioOption(field: PortfolioOptionField, value: string) {
+  const { error } = await requireSupabase().from('portfolio_options').insert({ field, value: value.trim() })
+  if (error) throw error
+}
+
+export async function renamePortfolioOption(id: string, value: string) {
+  const { error } = await requireSupabase().from('portfolio_options').update({ value: value.trim() }).eq('id', id)
+  if (error) throw error
+}
+
+export async function deletePortfolioOption(id: string) {
+  const { error } = await requireSupabase().from('portfolio_options').delete().eq('id', id)
+  if (error) throw error
+}
+
+export async function fetchChangeLog() {
+  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+  const client = requireSupabase()
+  const entries: ChangeLogEntry[] = []
+  const pageSize = 1000
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await client
+      .from('change_log')
+      .select('*')
+      .gte('created_at', cutoff)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1)
+    if (error) throw error
+    entries.push(...data)
+    if (data.length < pageSize) return entries
+  }
+}
+
+export function createFirstFramePoster(videoFile: File) {
+  const source = URL.createObjectURL(videoFile)
+  const video = document.createElement('video')
+  video.muted = true
+  video.playsInline = true
+  video.preload = 'auto'
+
+  return new Promise<File>((resolve, reject) => {
+    let timeout = 0
+    let finished = false
+    const finish = (error?: Error, poster?: File) => {
+      if (finished) return
+      finished = true
+      window.clearTimeout(timeout)
+      video.removeAttribute('src')
+      video.load()
+      URL.revokeObjectURL(source)
+      if (error) reject(error)
+      else if (poster) resolve(poster)
+      else reject(new Error('Could not create a poster from the first video frame.'))
+    }
+
+    timeout = window.setTimeout(() => finish(new Error('Could not decode the first video frame in time.')), 20000)
+    video.addEventListener('error', () => finish(new Error('Could not read the uploaded video to create its poster.')), { once: true })
+    video.addEventListener('loadeddata', () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      if (!canvas.width || !canvas.height) {
+        finish(new Error('The uploaded video has no readable first frame.'))
+        return
+      }
+      const context = canvas.getContext('2d')
+      if (!context) {
+        finish(new Error('This browser cannot create a poster image from the video.'))
+        return
+      }
+      context.drawImage(video, 0, 0, canvas.width, canvas.height)
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          finish(new Error('Could not encode the video poster image.'))
+          return
+        }
+        finish(undefined, new File([blob], `${videoFile.name.replace(/\.[^.]+$/, '')}-poster.jpg`, { type: 'image/jpeg' }))
+      }, 'image/jpeg', 0.9)
+    }, { once: true })
+    video.src = source
+    video.load()
+  })
 }
 
 export function initialBrandDetails(): BrandDetails[] {
