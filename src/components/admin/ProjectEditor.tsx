@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { ReactNode } from 'react'
 import { ArrowLeft, Save, Trash2, UploadCloud } from 'lucide-react'
@@ -40,21 +40,38 @@ function OptionSelect({ label, field, value, options, onChange, required = false
   )
 }
 
-function MultiOptionSelect({ label, field, values, options, onChange }: {
+function MultiSelectDropdown({ label, values, choices, onChange }: {
   label: string
-  field: 'platform' | 'tags'
   values: string[]
-  options: Record<PortfolioOptionField, string[]>
+  choices: string[]
   onChange: (values: string[]) => void
 }) {
-  const choices = [...new Set([...values, ...options[field]])]
+  const labelId = useId()
+
+  function toggle(value: string) {
+    onChange(values.includes(value)
+      ? values.filter((item) => item !== value)
+      : [...values, value])
+  }
+
   return (
-    <Field label={label}>
-      <select multiple value={values} onChange={(event) => onChange([...event.currentTarget.selectedOptions].map((option) => option.value))}>
-        {choices.map((option) => <option value={option} key={option}>{option}</option>)}
-      </select>
-      <small>Select multiple with Ctrl (Windows) or Command (Mac).</small>
-    </Field>
+    <div className="admin-field">
+      <span id={labelId}>{label}</span>
+      <details className="admin-multi-select">
+        <summary aria-label={`${label}, ${values.length} selected`}>
+          {values.length ? `${values.length} selected` : `Select ${label.toLowerCase()}`}
+        </summary>
+        <div className="admin-multi-select-menu" role="group" aria-labelledby={labelId}>
+          {choices.map((choice) => (
+            <label className="admin-multi-select-option" key={choice}>
+              <input type="checkbox" checked={values.includes(choice)} onChange={() => toggle(choice)} />
+              <span>{choice}</span>
+            </label>
+          ))}
+        </div>
+      </details>
+      <small>Choose one or more options.</small>
+    </div>
   )
 }
 
@@ -160,19 +177,19 @@ export default function ProjectEditor({ project: initialProject, brands, options
             {brands.map((brand) => <option value={brand.name} key={brand.name}>{brand.name}</option>)}
           </select>
         </Field>
-        <Field label="Associated brands">
-          <select multiple value={project.associatedBrands} onChange={(event) => update('associatedBrands', [...event.currentTarget.selectedOptions].map((option) => option.value))}>
-            {[...new Set([...project.associatedBrands, ...brands.map((brand) => brand.name)])].map((name) => <option value={name} key={name}>{name}</option>)}
-          </select>
-          <small>Select multiple with Ctrl (Windows) or Command (Mac).</small>
-        </Field>
+        <MultiSelectDropdown
+          label="Associated brands"
+          values={project.associatedBrands}
+          choices={[...new Set([...project.associatedBrands, ...brands.map((brand) => brand.name)])]}
+          onChange={(value) => update('associatedBrands', value)}
+        />
         <OptionSelect label="Sector" field="sector" required value={project.sector} options={options} onChange={(value) => update('sector', value)} />
         <OptionSelect label="Business category" field="businessCategory" value={project.businessCategory} options={options} onChange={(value) => update('businessCategory', value)} />
         <OptionSelect label="Language" field="language" required value={project.language} options={options} onChange={(value) => update('language', value)} />
         <Field label="Year"><input required type="number" min="1900" max="2200" value={project.year} onChange={(event) => update('year', Number(event.target.value))} /></Field>
         <OptionSelect label="Campaign type" field="campaignType" required value={project.campaignType} options={options} onChange={(value) => update('campaignType', value)} />
         <OptionSelect label="Ad format" field="adFormat" required value={project.adFormat} options={options} onChange={(value) => update('adFormat', value)} />
-        <MultiOptionSelect label="Platforms" field="platform" values={project.platform} options={options} onChange={(value) => update('platform', value)} />
+        <MultiSelectDropdown label="Platforms" values={project.platform} choices={[...new Set([...project.platform, ...options.platform])]} onChange={(value) => update('platform', value)} />
         <OptionSelect label="Orientation" field="orientation" required value={project.orientation} options={options} onChange={(value) => update('orientation', value)} />
         <Field label="Duration"><input value={project.duration} onChange={(event) => update('duration', event.target.value)} placeholder="00:30" /></Field>
         <Field label="Accent color"><input type="color" value={project.accentColor} onChange={(event) => update('accentColor', event.target.value)} /></Field>
@@ -191,7 +208,7 @@ export default function ProjectEditor({ project: initialProject, brands, options
         </Field>
         <Field label="Creative summary" wide><textarea required rows={4} value={project.description} onChange={(event) => update('description', event.target.value)} /></Field>
         <Field label="Credits"><input value={project.credits.join(', ')} onChange={(event) => update('credits', event.target.value.split(',').map((item) => item.trim()).filter(Boolean))} /></Field>
-        <MultiOptionSelect label="Tags" field="tags" values={project.tags} options={options} onChange={(value) => update('tags', value)} />
+        <MultiSelectDropdown label="Tags" values={project.tags} choices={[...new Set([...project.tags, ...options.tags])]} onChange={(value) => update('tags', value)} />
         <label className="admin-checkbox field-wide"><input type="checkbox" checked={project.featured} onChange={(event) => update('featured', event.target.checked)} /><span>Show in featured work</span></label>
       </div>
       </fieldset>
