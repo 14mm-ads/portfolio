@@ -1,19 +1,31 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { ArrowLeft, LogOut, Plus, Search, UploadCloud } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { assetUrl } from '../../lib/assetUrl'
 import { usePortfolio } from '../../context/PortfolioContext'
 import type { BrandDetails } from '../../data/portfolioRepository'
-import { deleteBrand, deleteProject, removeMedia, saveBrand, saveProject, seedDemoContent } from '../../data/portfolioRepository'
+import {
+  deleteBrand,
+  deleteProject,
+  fetchPortfolioOptions,
+  PORTFOLIO_OPTION_FIELDS,
+  removeMedia,
+  saveBrand,
+  saveProject,
+  seedDemoContent,
+} from '../../data/portfolioRepository'
+import type { PortfolioOption, PortfolioOptionField } from '../../data/portfolioRepository'
 import type { DemoProject } from '../../data/projects'
 import BrandEditor from './BrandEditor'
+import ChangeLog from './ChangeLog'
+import OptionsManager from './OptionsManager'
 import ProjectEditor from './ProjectEditor'
 
 type Props = { user: User; onSignOut: () => void }
-type Tab = 'projects' | 'brands'
+type Tab = 'projects' | 'brands' | 'options' | 'changes'
 
-function newProject(brands: BrandDetails[]): DemoProject {
+function newProject(brands: BrandDetails[], options: Record<PortfolioOptionField, string[]>): DemoProject {
   return {
     id: crypto.randomUUID(),
     slug: `new-project-${Date.now()}`,
@@ -21,14 +33,14 @@ function newProject(brands: BrandDetails[]): DemoProject {
     brand: brands[0]?.name ?? '',
     associatedBrands: [],
     brandLogo: '',
-    sector: '',
-    businessCategory: '',
-    language: 'English',
+    sector: options.sector[0] ?? '',
+    businessCategory: options.businessCategory[0] ?? '',
+    language: options.language[0] ?? '',
     year: new Date().getFullYear(),
-    campaignType: '',
-    adFormat: '',
+    campaignType: options.campaignType[0] ?? '',
+    adFormat: options.adFormat[0] ?? '',
     platform: [],
-    orientation: 'Landscape',
+    orientation: options.orientation[0] ?? 'Landscape',
     duration: '',
     videoSrc: null,
     posterSrc: '',
@@ -42,8 +54,8 @@ function newProject(brands: BrandDetails[]): DemoProject {
   }
 }
 
-function newBrand(): BrandDetails {
-  return { name: '', logo_url: null, tagline: '', description: '', sector: '', website_url: '', accent_color: '#8ab3aa' }
+function newBrand(sectors: string[]): BrandDetails {
+  return { name: '', logo_url: null, tagline: '', description: '', sector: sectors[0] ?? '', website_url: '', accent_color: '#8ab3aa' }
 }
 
 export default function AdminDashboard({ user, onSignOut }: Props) {
@@ -56,6 +68,29 @@ export default function AdminDashboard({ user, onSignOut }: Props) {
   const [notice, setNotice] = useState('')
   const [failure, setFailure] = useState('')
   const [busy, setBusy] = useState(false)
+  const [options, setOptions] = useState<PortfolioOption[]>([])
+  const [optionsLoading, setOptionsLoading] = useState(true)
+
+  const refreshOptions = useCallback(async () => {
+    const result = await fetchPortfolioOptions()
+    setOptions(result)
+  }, [])
+
+  useEffect(() => {
+    void refreshOptions().catch((cause: unknown) => {
+      setFailure(cause instanceof Error ? cause.message : 'Could not load content options.')
+    }).finally(() => setOptionsLoading(false))
+  }, [refreshOptions])
+
+  const optionValues = useMemo(() => {
+    const values = Object.keys(PORTFOLIO_OPTION_FIELDS).reduce((result, field) => {
+      result[field as PortfolioOptionField] = options
+        .filter((option) => option.field === field)
+        .map((option) => option.value)
+      return result
+    }, {} as Record<PortfolioOptionField, string[]>)
+    return values
+  }, [options])
 
   const filteredProjects = useMemo(() => projects.filter((item) =>
     `${item.title} ${item.brand} ${item.sector}`.toLowerCase().includes(query.toLowerCase())), [projects, query])
@@ -203,24 +238,38 @@ export default function AdminDashboard({ user, onSignOut }: Props) {
         {failure && <p className="admin-error" role="alert">{failure}</p>}
 
         <div className="admin-toolbar">
-          <div className="admin-tabs" role="tablist" aria-label="Content type">
-            <button role="tab" aria-selected={tab === 'projects'} className={tab === 'projects' ? 'is-active' : ''} onClick={() => { setTab('projects'); setProject(null); setBrand(null); setQuery('') }}>Projects</button>
-            <button role="tab" aria-selected={tab === 'brands'} className={tab === 'brands' ? 'is-active' : ''} onClick={() => { setTab('brands'); setProject(null); setBrand(null); setQuery('') }}>Brands</button>
+          <div className="admin-tabs" role="tablist" aria-label="Admin sections">
+            {([
+              ['projects', 'Projects'],
+              ['brands', 'Brands'],
+              ['options', 'Options'],
+              ['changes', 'Change log'],
+            ] as const).map(([value, label]) => (
+              <button
+                role="tab"
+                aria-selected={tab === value}
+                className={tab === value ? 'is-active' : ''}
+                key={value}
+                onClick={() => { setTab(value); setProject(null); setBrand(null); setOriginalBrandName(undefined); setQuery('') }}
+              >{label}</button>
+            ))}
           </div>
-          {!project && !brand && (
+          {!project && !brand && (tab === 'projects' || tab === 'brands') && (
             <div className="admin-toolbar-actions">
               <label className="admin-search"><Search size={15} /><span className="sr-only">Search {tab}</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={`Search ${tab}`} /></label>
-              <button className="admin-primary-button" type="button" onClick={() => tab === 'projects' ? setProject(newProject(brands)) : (setOriginalBrandName(undefined), setBrand(newBrand()))}><Plus size={15} /> Add {tab === 'projects' ? 'project' : 'brand'}</button>
+              <button className="admin-primary-button" type="button" disabled={optionsLoading} onClick={() => tab === 'projects' ? setProject(newProject(brands, optionValues)) : (setOriginalBrandName(undefined), setBrand(newBrand(optionValues.sector)))}><Plus size={15} /> Add {tab === 'projects' ? 'project' : 'brand'}</button>
             </div>
           )}
         </div>
 
         {loading && <p className="admin-loading">Refreshing archive…</p>}
+        {optionsLoading && <p className="admin-loading">Loading shared options…</p>}
 
         {project && (
           <ProjectEditor
             project={project}
             brands={brands}
+            options={optionValues}
             busy={busy}
             onCancel={() => setProject(null)}
             onSave={(value) => void saveCurrentProject(value)}
@@ -231,6 +280,7 @@ export default function AdminDashboard({ user, onSignOut }: Props) {
         {brand && (
           <BrandEditor
             brand={brand}
+            sectorOptions={optionValues.sector}
             busy={busy}
             onCancel={() => { setBrand(null); setOriginalBrandName(undefined) }}
             onSave={(value) => void saveCurrentBrand(value)}
@@ -238,13 +288,20 @@ export default function AdminDashboard({ user, onSignOut }: Props) {
           />
         )}
 
+        {!project && !brand && tab === 'options' && !optionsLoading && (
+          <OptionsManager options={options} onChanged={refreshOptions} />
+        )}
+        {!project && !brand && tab === 'changes' && <ChangeLog />}
+
         {!project && !brand && tab === 'projects' && (
           projects.length === 0
             ? <div className="admin-empty"><UploadCloud size={24} /><h2>Your archive is ready.</h2><p>Add a project, or import the 30 fictional demo projects and 50 sample brands.</p><button className="admin-secondary-button" disabled={busy} onClick={() => void loadDemoContent()}>Import demo archive</button></div>
             : <div className="admin-table">
               {filteredProjects.map((item) => (
                 <button className="admin-project-row" key={item.id} onClick={() => setProject(item)}>
-                  <img src={assetUrl(item.posterSrc)} alt="" loading="lazy" />
+                  {item.posterSrc
+                    ? <img src={assetUrl(item.posterSrc)} alt="" loading="lazy" />
+                    : item.videoSrc && <video src={assetUrl(item.videoSrc)} muted playsInline preload="metadata" aria-hidden="true" />}
                   <span className="admin-row-title"><strong>{item.title}</strong><small>{item.brand} · {item.sector}</small></span>
                   <span className="admin-row-detail">{item.orientation} · {item.year}</span>
                   <span className={`admin-pill${item.videoSrc ? ' has-media' : ''}`}>{item.videoSrc ? 'VIDEO LINKED' : 'NO VIDEO'}</span>
