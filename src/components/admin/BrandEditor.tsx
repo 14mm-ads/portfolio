@@ -6,13 +6,14 @@ import { removeMedia, uploadMedia } from '../../data/portfolioRepository'
 
 type Props = {
   brand: BrandDetails
+  sectorOptions: string[]
   busy: boolean
   onCancel: () => void
   onSave: (brand: BrandDetails) => void
   onDelete?: () => void
 }
 
-export default function BrandEditor({ brand: initialBrand, busy, onCancel, onSave, onDelete }: Props) {
+export default function BrandEditor({ brand: initialBrand, sectorOptions, busy, onCancel, onSave, onDelete }: Props) {
   const [brand, setBrand] = useState(initialBrand)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -67,7 +68,13 @@ export default function BrandEditor({ brand: initialBrand, busy, onCancel, onSav
       <fieldset className="admin-fieldset" disabled={busy || uploading}>
       <div className="admin-fields-grid">
         <label className="admin-field"><span>Brand name</span><input required maxLength={100} value={brand.name} onChange={(event) => update('name', event.target.value)} /></label>
-        <label className="admin-field"><span>Sector</span><input value={brand.sector} onChange={(event) => update('sector', event.target.value)} /></label>
+        <label className="admin-field"><span>Sector</span>
+          <select required value={brand.sector} onChange={(event) => update('sector', event.target.value)}>
+            {!brand.sector && <option value="">Select sector</option>}
+            {brand.sector && !sectorOptions.includes(brand.sector) && <option value={brand.sector}>{brand.sector} (existing)</option>}
+            {sectorOptions.map((sector) => <option value={sector} key={sector}>{sector}</option>)}
+          </select>
+        </label>
         <label className="admin-field field-wide"><span>Tagline</span><input value={brand.tagline} onChange={(event) => update('tagline', event.target.value)} /></label>
         <label className="admin-field field-wide"><span>Brand description</span><textarea rows={4} value={brand.description} onChange={(event) => update('description', event.target.value)} /></label>
         <label className="admin-field field-wide"><span>Website URL</span><input type="url" value={brand.website_url} onChange={(event) => update('website_url', event.target.value)} placeholder="https://" /></label>
